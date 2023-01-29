@@ -5,9 +5,9 @@ fn main() {
         ["#","#","#","#","#","#","#","#","#","#"],
         ["#"," ","#"," "," "," "," "," ","E","#"],
         ["#"," ","#"," ","#"," ","#","#","#","#"],
-        ["#"," ","T"," ","#"," "," "," "," ","#"],
-        ["#","#","#"," ","#"," ","#","#"," ","#"],
         ["#"," "," "," ","#"," "," "," "," ","#"],
+        ["#","#","#"," ","#"," ","#","#"," ","#"],
+        ["#"," ","T"," ","#"," "," "," "," ","#"],
         ["#","#"," ","#","#"," ","#"," ","#","#"],
         ["#"," "," ","#"," "," ","#"," "," ","#"],
         ["#","#","#","#","#","#","#","#","#","#"],
@@ -20,12 +20,13 @@ fn main() {
         println!("{}: {}", numberline, line)
     }
 
-    //Por cada X en la FILA -->
-    show_array_visually(maze);
+    let theseus = check_position_entity(maze, "T");
+    let exit = check_position_entity(maze, "E");
 
-    //Búsqueda de cierta String dentro del array
-    check_position_entity(maze, "T");
-    check_position_entity(maze, "E");
+    println!("{:?} || {:?}", theseus, exit);
+
+    //Por cada X en la FILA -->
+    show_array_visually(maze);   
 
     //TEST
     //Funcional, muestra todo el array y lo deja visualmente aceptable
@@ -36,7 +37,7 @@ fn main() {
     let bool: bool = is_position_valid(maze, 3, 2);
 
     let pos: Position = Position {posX: 3, posY: 2};
-    let position_test = check_around(maze, pos);
+    let position_test = check_around(maze, theseus);
     println!("{:?}", position_test);
 
 }
@@ -45,6 +46,13 @@ fn main() {
 struct Position {
     posX : i32,
     posY : i32
+}
+
+impl Position {
+    fn change_position (&mut self, x: i32, y: i32) {
+        self.posX = x;
+        self.posY = y;
+    }
 }
 
 fn show_array_simple(array: [[&str; 10]; 9]) {
@@ -71,17 +79,18 @@ fn show_array_visually(array: [[&str; 10]; 9]) {
     }
 }
 
-fn check_position_entity(array: [[&str; 10]; 9], string: &str) {
-    let mut coordinates;
+fn check_position_entity(array: [[&str; 10]; 9], string: &str) -> Position {
+    let mut coordinates = Position{ posX: 0, posY: 0};
 
     for (x, row) in array.iter().enumerate() {
         for (y, column) in row.iter().enumerate() {
             if column.contains(string) {
-                coordinates = Position{posX : x as i32, posY : y as i32};
-                println!("{} -> {:?}", string, coordinates);      
+                coordinates.change_position(x as i32, y as i32);    
             }
         }
     }
+
+    return coordinates
 }
 
 //Comprueba si la posición dada dentro del array es válida o si es el Theseus o la salida
@@ -120,7 +129,7 @@ fn check_around(array: [[&str; 10];9], position: Position) -> VecDeque<Position>
             states.push_back(Position{posX: nx, posY: ny});
          }
     }
-    
+
     let state_pop = states.pop_front().expect("Error");
     println!("{:?}", state_pop);
 
