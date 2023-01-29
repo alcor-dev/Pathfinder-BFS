@@ -25,15 +25,14 @@ fn main() {
 
     println!("{:?} || {:?}", theseus, exit);
 
-    //Por cada X en la FILA -->
     show_array_visually(maze);   
 
     //TEST
-    //Funcional, muestra todo el array y lo deja visualmente aceptable
+    //Functional, shows all the array and keeps it visually acceptable
     show_array_simple(maze);
 
     //TEST
-    //Funcional, comprueba que la posición donde se quiera mover la entidad pueda
+    //Functional, checks if the entity can move towards a new position (up, down, left, right)
     let bool: bool = is_position_valid(maze, 3, 2);
 
     let pos: Position = Position {posX: 3, posY: 2};
@@ -55,6 +54,8 @@ impl Position {
     }
 }
 
+//Little test to know how to check every space
+//Mostly inspired by the Java way
 fn show_array_simple(array: [[&str; 10]; 9]) {
     let mut counter: u32 = 0;
 
@@ -68,10 +69,12 @@ fn show_array_simple(array: [[&str; 10]; 9]) {
     }
 }
 
+//Shows a little "map" about how the array is arranged
+//think of it like looking at a dungeon map from above
 fn show_array_visually(array: [[&str; 10]; 9]) {
     for (x, row) in array.iter().enumerate() {
         print!("{},", x);
-        //Por cada Y dentro de la FILA -->
+        //For every Y inside the ROW
         for (y, col) in row.iter().enumerate() {
             print!(" {} : {} ||", y, col);
         }
@@ -79,6 +82,7 @@ fn show_array_visually(array: [[&str; 10]; 9]) {
     }
 }
 
+//Given the char of the entity to seek, it will return the position (if there's one, of course)
 fn check_position_entity(array: [[&str; 10]; 9], string: &str) -> Position {
     let mut coordinates = Position{ posX: 0, posY: 0};
 
@@ -93,7 +97,7 @@ fn check_position_entity(array: [[&str; 10]; 9], string: &str) -> Position {
     return coordinates
 }
 
-//Comprueba si la posición dada dentro del array es válida o si es el Theseus o la salida
+//Checks if every position given is valid, and even if the new position is either Theseus or the exit
 fn is_position_valid(array: [[&str; 10];9], x: usize, y: usize) -> bool {
     if array[x][y] == "#" && x < array.len() && y < array[0].len() {
         println!("Yes, its not valid -> {}" , array[x as usize][y as usize]);
@@ -112,11 +116,11 @@ fn is_position_valid(array: [[&str; 10];9], x: usize, y: usize) -> bool {
     }
 }
 
-//comprueba los espacios de alrededor hacia los que el personaje puede moverse
+//Checks the spaces around Theseus to see if he can move towards that point
 fn check_around(array: [[&str; 10];9], position: Position) -> VecDeque<Position> {
     println!("These are the positions where you can move from: [{}][{}]", position.posX, position.posY);
     let Position{posX, posY} = position;
-    //VecDeque permite el uso de Queues y sacar y meter objetos al final y al principio de estas
+    //VecDeque allows us to use queues and have some operations that can push and pop from the front or the back
     let mut states = VecDeque::new();
 
     for (dx, dy) in [(1,0),(0,1),(-1,0),(0,-1)] {
@@ -124,8 +128,8 @@ fn check_around(array: [[&str; 10];9], position: Position) -> VecDeque<Position>
         let ny = posY + dy;
 
          if(is_position_valid(array, nx as usize, ny as usize)) {
-            //muestra la posición hacia la que puede avanzar
             println!("position valid at -> [{}][{}]", nx, ny);
+            //Pushes the position (if it is valid) into the back of the list
             states.push_back(Position{posX: nx, posY: ny});
          }
     }
